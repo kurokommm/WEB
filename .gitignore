@@ -27,3 +27,6 @@ dist-ssr
 *.mp3
 *.mp4
 *.wav
+
+# Allow the site's music track
+!public/music.mp3
