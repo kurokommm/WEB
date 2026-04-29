@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import FadeIn from './FadeIn'
 import SplitText from './SplitText'
 
@@ -56,31 +56,60 @@ const projects = [
 
 function ProjectCard({ project, index }) {
   const ref = useRef(null)
+  const cardRef = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
+
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [7, -7]), { stiffness: 300, damping: 30 })
+  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-9, 9]), { stiffness: 300, damping: 30 })
+  const glowOpacity = useMotionValue(0)
+  const glowOpacitySpring = useSpring(glowOpacity, { stiffness: 200, damping: 25 })
+
+  const handleMouseMove = (e) => {
+    const rect = cardRef.current.getBoundingClientRect()
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5)
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5)
+    glowOpacity.set(1)
+  }
+
+  const handleMouseLeave = () => {
+    mouseX.set(0)
+    mouseY.set(0)
+    glowOpacity.set(0)
+  }
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: (index % 3) * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative rounded-2xl p-8 flex flex-col gap-5 transition-all duration-500 cursor-default"
+      transition={{ duration: 0.8, delay: (index % 3) * 0.12, ease: [0.16, 1, 0.3, 1] }}
+      style={{ perspective: '800px' }}
+    >
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
+        rotateX,
+        rotateY,
+        transformStyle: 'preserve-3d',
         background: 'rgba(255,255,255,0.015)',
         border: '1px solid var(--border)',
+        borderRadius: '1rem',
+        padding: '2rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1.25rem',
+        transition: 'border-color 0.3s, box-shadow 0.3s, background 0.3s',
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'var(--accent-glow)'
-        e.currentTarget.style.borderColor = 'var(--border-accent)'
-        e.currentTarget.style.transform = 'translateY(-4px)'
-        e.currentTarget.style.boxShadow = '0 20px 60px var(--accent-glow)'
+      whileHover={{
+        background: 'rgba(22,214,116,0.035)',
+        borderColor: 'rgba(124,106,255,0.25)',
+        boxShadow: '0 24px 60px rgba(22,214,116,0.1), 0 0 0 1px rgba(22,214,116,0.08)',
       }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255,255,255,0.015)'
-        e.currentTarget.style.borderColor = 'var(--border)'
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = 'none'
-      }}
+      className="group relative cursor-default"
     >
       <div className="flex items-start justify-between">
         <div
@@ -113,19 +142,22 @@ function ProjectCard({ project, index }) {
 
       <div className="flex flex-wrap gap-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
         {project.tech.map((t) => (
-          <span
+          <motion.span
             key={t}
             className="text-xs px-3 py-1 rounded-full"
             style={{
               background: 'var(--accent-glow)',
               color: project.accent,
-              border: 'var(--border-accent)',
+              border: '1px solid var(--border-accent)',
             }}
+            whileHover={{ scale: 1.08, background: 'rgba(22,214,116,0.12)' }}
+            transition={{ duration: 0.15 }}
           >
             {t}
-          </span>
+          </motion.span>
         ))}
       </div>
+    </motion.div>
     </motion.div>
   )
 }

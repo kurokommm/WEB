@@ -1,5 +1,36 @@
+import { useRef, useEffect, useState } from 'react'
+import { motion, useInView, animate } from 'framer-motion'
 import FadeIn from './FadeIn'
 import SplitText from './SplitText'
+
+const stats = [
+  { value: 5, suffix: '+', label: 'Years of experience' },
+  { value: 10, suffix: '+', label: 'Systems built' },
+  { value: 3, suffix: '', label: 'Core domains' },
+]
+
+function Counter({ value, suffix, delay }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const [displayed, setDisplayed] = useState(0)
+
+  useEffect(() => {
+    if (!inView) return
+    const controls = animate(0, value, {
+      duration: 1.8,
+      delay,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setDisplayed(Math.round(v)),
+    })
+    return controls.stop
+  }, [inView, value, delay])
+
+  return (
+    <span ref={ref}>
+      {displayed}{suffix}
+    </span>
+  )
+}
 
 const traits = [
   { label: 'Specialization', value: 'Low-level systems & runtime analysis' },
@@ -32,6 +63,43 @@ export default function About() {
           className="text-xs tracking-[0.4em] uppercase mb-6"
           style={{ color: 'var(--accent)', letterSpacing: '0.35em' }}
         />
+
+        {/* Animated stats row */}
+        <div className="grid grid-cols-3 gap-6 mb-20">
+          {stats.map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ scale: 1.04 }}
+              className="stat-card rounded-2xl p-6 text-center"
+              style={{
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <div
+                className="font-light mb-1"
+                style={{
+                  fontSize: 'clamp(2rem, 4vw, 3rem)',
+                  color: 'var(--accent)',
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1,
+                }}
+              >
+                <Counter value={stat.value} suffix={stat.suffix} delay={0.4 + i * 0.15} />
+              </div>
+              <div
+                className="text-xs tracking-widest uppercase"
+                style={{ color: 'var(--text-secondary)', letterSpacing: '0.15em', fontSize: '10px' }}
+              >
+                {stat.label}
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
         <div className="grid md:grid-cols-2 gap-20 items-start">
           <div>
