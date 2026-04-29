@@ -37,11 +37,11 @@ export default function MusicPlayer() {
         whileTap={{ scale: 0.94 }}
         className="flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-500"
         style={{
-          background: playing ? 'rgba(22,214,116,0.08)' : 'rgba(255,255,255,0.03)',
-          border: playing ? '1px solid rgba(22,214,116,0.25)' : '1px solid rgba(255,255,255,0.07)',
+          background: playing ? 'rgba(255,79,163,0.1)' : 'rgba(255,255,255,0.03)',
+          border: playing ? '1px solid rgba(255,79,163,0.3)' : '1px solid rgba(255,255,255,0.07)',
           backdropFilter: 'blur(16px)',
           cursor: fading ? 'not-allowed' : 'pointer',
-          boxShadow: playing ? '0 0 24px rgba(22,214,116,0.12)' : 'none',
+          boxShadow: playing ? '0 0 24px rgba(255,79,163,0.16)' : 'none',
         }}
         aria-label={playing ? 'Pause music' : 'Play music'}
       >

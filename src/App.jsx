@@ -8,7 +8,6 @@ import Projects from './components/Projects'
 import Contact from './components/Contact'
 import MusicPlayer from './components/MusicPlayer'
 import BackgroundScene from './components/BackgroundScene'
-import CustomCursor from './components/CustomCursor'
 import ScrollProgress from './components/ScrollProgress'
 
 export default function App() {
@@ -30,7 +29,6 @@ export default function App() {
 
   return (
     <div className="noise" style={{ background: 'transparent', minHeight: '100vh' }}>
-      <CustomCursor />
       <ScrollProgress />
       <BackgroundScene />
       <Navbar />

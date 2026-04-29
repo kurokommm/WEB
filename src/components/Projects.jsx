@@ -65,7 +65,7 @@ function ProjectCard({ project, index }) {
   const moveY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 28 })
   const glowX = useTransform(mouseX, [-0.5, 0.5], [18, 82])
   const glowY = useTransform(mouseY, [-0.5, 0.5], [18, 82])
-  const dynamicGlow = useMotionTemplate`radial-gradient(440px circle at ${glowX}% ${glowY}%, rgba(22,214,116,0.12), rgba(74,222,128,0.06) 30%, transparent 65%)`
+  const dynamicGlow = useMotionTemplate`radial-gradient(440px circle at ${glowX}% ${glowY}%, rgba(255,79,163,0.12), rgba(255,255,255,0.08) 30%, transparent 65%)`
   const glowOpacity = useMotionValue(0)
   const glowOpacitySpring = useSpring(glowOpacity, { stiffness: 200, damping: 25 })
 
@@ -109,9 +109,9 @@ function ProjectCard({ project, index }) {
       }}
       whileHover={{
         scale: 1.015,
-        backgroundColor: 'rgba(22,214,116,0.03)',
+        backgroundColor: 'rgba(255,79,163,0.04)',
         borderColor: 'rgba(124,106,255,0.25)',
-        boxShadow: '0 18px 45px rgba(22,214,116,0.08), 0 0 0 1px rgba(22,214,116,0.06)',
+        boxShadow: '0 18px 45px rgba(255,79,163,0.08), 0 0 0 1px rgba(255,255,255,0.08)',
       }}
       className="group relative cursor-default"
     >
@@ -154,7 +154,7 @@ function ProjectCard({ project, index }) {
               color: project.accent,
               border: '1px solid var(--border-accent)',
             }}
-            whileHover={{ scale: 1.08, background: 'rgba(22,214,116,0.12)' }}
+            whileHover={{ scale: 1.08, background: 'rgba(255,79,163,0.12)' }}
             transition={{ duration: 0.15 }}
           >
             {t}

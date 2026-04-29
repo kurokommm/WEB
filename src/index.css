@@ -9,22 +9,21 @@
     --text-primary: #eeeef2;
     --text-secondary: rgba(238, 238, 242, 0.42);
 
-    /* Primary accent — green */
-    --accent: #16d674;
-    --accent-dim: #0ea855;
-    --accent-glow: rgba(22, 214, 116, 0.22);
+    /* Primary accent — pink */
+    --accent: #ff4fa3;
+    --accent-dim: #d93f8b;
+    --accent-glow: rgba(255, 79, 163, 0.22);
 
-    /* Secondary accent — light green */
-    --accent-2: #4ade80;
-    --accent-2-dim: #22c55e;
-    --accent-2-glow: rgba(74, 222, 128, 0.18);
+    /* Secondary accent — pink-white */
+    --accent-2: #ffffff;
+    --accent-2-dim: #ffd8eb;
+    --accent-2-glow: rgba(255, 255, 255, 0.2);
   }
 
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    cursor: none !important;
   }
 
   html {

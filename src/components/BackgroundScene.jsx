@@ -6,8 +6,8 @@ import { useMouse } from '../hooks/useMouse'
 
 /* ── Colors ──────────────────────────────────────────────────── */
 const C_WHITE  = new THREE.Color('#ffffff')
-const C_GREEN  = new THREE.Color('#16d674')
-const C_GREEN2 = new THREE.Color('#4ade80')
+const C_GREEN  = new THREE.Color('#ff4fa3')
+const C_GREEN2 = new THREE.Color('#ffd8eb')
 
 /* ── Scroll lerp ─────────────────────────────────────────────── */
 function useScroll() {
@@ -241,9 +241,9 @@ function Scene() {
   return (
     <>
       <ambientLight intensity={0.04} />
-      <pointLight position={[0, 0, 4]}  intensity={2.5} color="#16d674" />
-      <pointLight position={[3, 2, 1]}  intensity={0.6} color="#4ade80" />
-      <pointLight position={[-3, -2, 2]} intensity={0.3} color="#0ea855" />
+      <pointLight position={[0, 0, 4]}  intensity={2.5} color="#ff4fa3" />
+      <pointLight position={[3, 2, 1]}  intensity={0.6} color="#ffd8eb" />
+      <pointLight position={[-3, -2, 2]} intensity={0.3} color="#e7a8ca" />
 
       {/* Background star field */}
       <Stars radius={40} depth={20} count={2500} factor={2} saturation={0} fade speed={0.4} />

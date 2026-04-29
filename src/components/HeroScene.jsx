@@ -4,10 +4,11 @@ import { Points, PointMaterial } from '@react-three/drei'
 import * as THREE from 'three'
 import { useMouse } from '../hooks/useMouse'
 
-const G_BRIGHT = '#16d674'
-const G_MID    = '#4ade80'
-const G_DIM    = '#083d20'
-const G_PALE   = '#0a5c2e'
+const G_BRIGHT = '#ff4fa3'
+const G_MID    = '#ffd8eb'
+const G_DIM    = '#6a1a46'
+const G_PALE   = '#f2c4dd'
+const G_HALO   = '#fff4fa'
 
 /* ── Accretion disc ring — each ring rotates at its own speed ── */
 function DiscRing({ innerR, outerR, count, speed, colorA, colorB, heightScale = 0.08 }) {
@@ -55,6 +56,7 @@ function DiscRing({ innerR, outerR, count, speed, colorA, colorB, heightScale = 
         transparent
         opacity={0.95}
         depthWrite={false}
+        blending={THREE.AdditiveBlending}
       />
     </points>
   )
@@ -104,12 +106,81 @@ function PhotonRing() {
   )
 }
 
+/* ── Soft lensing halo around the horizon ────────────────────── */
+function LensingHalo() {
+  const shell = useRef()
+  const ring = useRef()
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime
+    if (shell.current) {
+      shell.current.material.opacity = 0.085 + Math.sin(t * 1.5) * 0.015
+    }
+    if (ring.current) {
+      ring.current.rotation.z = t * 0.24
+      ring.current.material.opacity = 0.22 + Math.cos(t * 0.8) * 0.05
+    }
+  })
+
+  return (
+    <>
+      <mesh ref={shell} renderOrder={1}>
+        <sphereGeometry args={[0.5, 48, 48]} />
+        <meshBasicMaterial
+          color={G_HALO}
+          transparent
+          opacity={0.09}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+      <mesh ref={ring} rotation={[Math.PI / 2, 0, 0]} renderOrder={2}>
+        <torusGeometry args={[0.56, 0.015, 16, 160]} />
+        <meshStandardMaterial
+          color={G_MID}
+          emissive={G_MID}
+          emissiveIntensity={2.1}
+          transparent
+          opacity={0.24}
+          depthWrite={false}
+        />
+      </mesh>
+    </>
+  )
+}
+
 /* ── Event horizon — pure black sphere ───────────────────────── */
 function EventHorizon() {
   return (
     <mesh>
       <sphereGeometry args={[0.35, 48, 48]} />
       <meshBasicMaterial color="#000000" />
+    </mesh>
+  )
+}
+
+/* ── Hot glow sheet from disc turbulence ─────────────────────── */
+function AccretionGlow() {
+  const glow = useRef()
+
+  useFrame((state) => {
+    if (!glow.current) return
+    const t = state.clock.elapsedTime
+    glow.current.rotation.y = t * 0.22
+    glow.current.material.opacity = 0.13 + Math.sin(t * 1.2) * 0.03
+  })
+
+  return (
+    <mesh ref={glow} rotation={[Math.PI / 2.2, 0, 0]} renderOrder={1}>
+      <ringGeometry args={[0.56, 3.9, 128]} />
+      <meshBasicMaterial
+        color={G_BRIGHT}
+        transparent
+        opacity={0.14}
+        side={THREE.DoubleSide}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
     </mesh>
   )
 }
@@ -133,7 +204,7 @@ function PolarJet({ direction = 1 }) {
     return pos
   }, [direction])
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!ref.current) return
     // Slowly drift particles upward by rotating around a shifted pivot — fake it via Y phase
     ref.current.rotation.y += 0.003 * direction
@@ -148,6 +219,40 @@ function PolarJet({ direction = 1 }) {
         sizeAttenuation
         depthWrite={false}
         opacity={0.55}
+      />
+    </Points>
+  )
+}
+
+/* ── Floating dust for depth/parallax ─────────────────────────── */
+function SpaceDust() {
+  const ref = useRef()
+
+  const positions = useMemo(() => {
+    const COUNT = 1200
+    const pos = new Float32Array(COUNT * 3)
+    for (let i = 0; i < COUNT; i++) {
+      pos[i * 3 + 0] = (Math.random() - 0.5) * 16
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 10
+      pos[i * 3 + 2] = -2 - Math.random() * 14
+    }
+    return pos
+  }, [])
+
+  useFrame((state) => {
+    if (!ref.current) return
+    ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.06) * 0.25
+  })
+
+  return (
+    <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
+      <PointMaterial
+        transparent
+        color="#ffe6f2"
+        size={0.014}
+        sizeAttenuation
+        depthWrite={false}
+        opacity={0.18}
       />
     </Points>
   )
@@ -175,7 +280,7 @@ function StarField() {
     <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#aaffcc"
+        color="#ffeaf4"
         size={0.01}
         sizeAttenuation
         depthWrite={false}
@@ -190,7 +295,7 @@ function BlackHole() {
   const group = useRef()
   const mouse = useMouse()
 
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (!group.current) return
     group.current.rotation.x += (mouse.current.y * 0.04 - group.current.rotation.x) * 0.03
     group.current.rotation.z += (mouse.current.x * 0.04 - group.current.rotation.z) * 0.03
@@ -198,14 +303,17 @@ function BlackHole() {
 
   return (
     <group ref={group}>
+      <SpaceDust />
       <StarField />
 
       {/* Disc — 3 rings at Keplerian speeds (inner fastest) */}
-      <DiscRing innerR={0.48} outerR={1.1}  count={3000} speed={0.95} colorA="#ccffdd" colorB={G_BRIGHT} heightScale={0.04} />
+      <DiscRing innerR={0.48} outerR={1.1}  count={3000} speed={0.95} colorA="#fff1f8" colorB={G_BRIGHT} heightScale={0.04} />
       <DiscRing innerR={1.1}  outerR={2.4}  count={4000} speed={0.42} colorA={G_BRIGHT} colorB={G_MID}    heightScale={0.10} />
       <DiscRing innerR={2.4}  outerR={4.2}  count={3000} speed={0.16} colorA={G_MID}   colorB={G_PALE}   heightScale={0.18} />
 
+      <AccretionGlow />
       <PhotonRing />
+      <LensingHalo />
       <EventHorizon />
       <PolarJet  direction={ 1} />
       <PolarJet  direction={-1} />
@@ -223,8 +331,9 @@ export default function HeroScene() {
       dpr={[1, 2]}
     >
       <ambientLight intensity={0.05} />
-      <pointLight position={[0, 0, 0]} intensity={5}   color={G_BRIGHT} />
+      <pointLight position={[0, 0, 0]} intensity={5.8} color={G_BRIGHT} />
       <pointLight position={[3, 1, 2]} intensity={0.6} color={G_MID}    />
+      <pointLight position={[-2, -1, 2]} intensity={0.4} color={G_PALE} />
 
       <BlackHole />
     </Canvas>
