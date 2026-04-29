@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, useInView, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import FadeIn from './FadeIn'
 import SplitText from './SplitText'
 
@@ -61,12 +61,16 @@ function ProjectCard({ project, index }) {
 
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [7, -7]), { stiffness: 300, damping: 30 })
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-9, 9]), { stiffness: 300, damping: 30 })
+  const moveX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 28 })
+  const moveY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 28 })
+  const glowX = useTransform(mouseX, [-0.5, 0.5], [18, 82])
+  const glowY = useTransform(mouseY, [-0.5, 0.5], [18, 82])
+  const dynamicGlow = useMotionTemplate`radial-gradient(440px circle at ${glowX}% ${glowY}%, rgba(22,214,116,0.12), rgba(74,222,128,0.06) 30%, transparent 65%)`
   const glowOpacity = useMotionValue(0)
   const glowOpacitySpring = useSpring(glowOpacity, { stiffness: 200, damping: 25 })
 
   const handleMouseMove = (e) => {
+    if (!cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
     mouseX.set((e.clientX - rect.left) / rect.width - 0.5)
     mouseY.set((e.clientY - rect.top) / rect.height - 0.5)
@@ -85,17 +89,16 @@ function ProjectCard({ project, index }) {
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8, delay: (index % 3) * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      style={{ perspective: '800px' }}
     >
     <motion.div
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        rotateX,
-        rotateY,
-        transformStyle: 'preserve-3d',
-        background: 'rgba(255,255,255,0.015)',
+        x: moveX,
+        y: moveY,
+        backgroundColor: 'rgba(255,255,255,0.015)',
+        backgroundImage: dynamicGlow,
         border: '1px solid var(--border)',
         borderRadius: '1rem',
         padding: '2rem',
@@ -105,9 +108,10 @@ function ProjectCard({ project, index }) {
         transition: 'border-color 0.3s, box-shadow 0.3s, background 0.3s',
       }}
       whileHover={{
-        background: 'rgba(22,214,116,0.035)',
+        scale: 1.015,
+        backgroundColor: 'rgba(22,214,116,0.03)',
         borderColor: 'rgba(124,106,255,0.25)',
-        boxShadow: '0 24px 60px rgba(22,214,116,0.1), 0 0 0 1px rgba(22,214,116,0.08)',
+        boxShadow: '0 18px 45px rgba(22,214,116,0.08), 0 0 0 1px rgba(22,214,116,0.06)',
       }}
       className="group relative cursor-default"
     >
