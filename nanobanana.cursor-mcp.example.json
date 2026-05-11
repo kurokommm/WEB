@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "nanobanana": {
+      "command": "node",
+      "args": ["vendor/nanobanana/mcp-server/dist/index.js"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "NANOBANANA_API_KEY": "REPLACE_WITH_GOOGLE_AI_STUDIO_KEY"
+      }
+    }
+  }
+}

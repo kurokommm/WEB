@@ -23,6 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
+# Cursor / Agent local artifacts
+.cursor/
+.agents/
+**/__pycache__/
+*.pyc
+
 # Media files
 *.mp3
 *.mp4
