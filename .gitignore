@@ -30,3 +30,7 @@ dist-ssr
 
 # Allow the site's music track
 !public/music.mp3
+
+# Nano Banana (Gemini CLI extension) — dependencies only; source lives in vendor/
+vendor/nanobanana/mcp-server/node_modules
+vendor/nanobanana/node_modules

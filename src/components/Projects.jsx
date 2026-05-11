@@ -1,168 +1,55 @@
-import { useRef } from 'react'
-import { motion, useInView, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import FadeIn from './FadeIn'
-import SplitText from './SplitText'
+import SectionHeading from './SectionHeading'
+import { projects } from '../data/projects'
 
-const projects = [
-  {
-    title: 'Runtime Visualization System',
-    tag: 'Real-time Visualization',
-    description:
-      'Real-time data extraction and rendering pipeline for process environments. Reads runtime memory to surface internal state structures and applies world-to-screen projection for overlay visualization.',
-    tech: ['C++', 'DirectX', 'Linear Algebra'],
-    accent: 'var(--accent)',
-  },
-  {
-    title: 'Directional Computation Engine',
-    tag: 'Engine Research',
-    description:
-      'Mathematical modeling system for angular computation and smooth interpolation in 3D space. Implements quaternion rotations, angular velocity estimation, and latency-compensated trajectory prediction.',
-    tech: ['C++', '3D Math', 'Quaternions'],
-    accent: 'var(--accent-2)',
-  },
-  {
-    title: 'Process Memory Toolkit',
-    tag: 'Low-level Tooling',
-    description:
-      'Low-level interaction framework for reading and writing process memory via ADB. Supports offset resolution, pointer chain traversal, and live structure inspection for research and analysis.',
-    tech: ['C++', 'ADB', 'Python'],
-    accent: 'var(--accent)',
-  },
-  {
-    title: 'Il2Cpp Runtime Analyzer',
-    tag: 'Reverse Engineering',
-    description:
-      'Automated analysis tool for Unity / Il2Cpp environments. Reconstructs class hierarchies, resolves method offsets, and maps managed-to-native structures for research and debugging purposes.',
-    tech: ['C++', 'Il2Cpp', 'IDA Pro'],
-    accent: 'var(--accent-2)',
-  },
-  {
-    title: 'ImGui Overlay Framework',
-    tag: 'Rendering System',
-    description:
-      'Standalone ImGui-based overlay framework with DirectX hook integration. Supports real-time data panels, 2D draw primitives, and configurable render pipeline composition.',
-    tech: ['C++', 'ImGui', 'DirectX 11'],
-    accent: 'var(--accent)',
-  },
-  {
-    title: 'Binary Signature Resolver',
-    tag: 'System Analysis',
-    description:
-      'Pattern scanning and signature-based offset resolver for Windows and Android processes. Handles ASLR and versioned binary targets without recompilation.',
-    tech: ['C++', 'WinAPI', 'ADB'],
-    accent: 'var(--accent-2)',
-  },
-]
-
-function ProjectCard({ project, index }) {
-  const ref = useRef(null)
-  const cardRef = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
-
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-  const moveX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 28 })
-  const moveY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 28 })
-  const glowX = useTransform(mouseX, [-0.5, 0.5], [18, 82])
-  const glowY = useTransform(mouseY, [-0.5, 0.5], [18, 82])
-  const dynamicGlow = useMotionTemplate`radial-gradient(440px circle at ${glowX}% ${glowY}%, rgba(255,79,163,0.12), rgba(255,255,255,0.08) 30%, transparent 65%)`
-  const glowOpacity = useMotionValue(0)
-  const glowOpacitySpring = useSpring(glowOpacity, { stiffness: 200, damping: 25 })
-
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    mouseX.set((e.clientX - rect.left) / rect.width - 0.5)
-    mouseY.set((e.clientY - rect.top) / rect.height - 0.5)
-    glowOpacity.set(1)
-  }
-
-  const handleMouseLeave = () => {
-    mouseX.set(0)
-    mouseY.set(0)
-    glowOpacity.set(0)
-  }
-
+function ProjectCard({ project }) {
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: (index % 3) * 0.12, ease: [0.16, 1, 0.3, 1] }}
+    <article
+      data-gsap-reveal
+      className="group flex flex-col overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border)] bg-[var(--surface)] transition-[border-color,box-shadow] duration-300 hover:border-[rgba(212,168,83,0.28)] hover:shadow-[0_28px_56px_-28px_rgba(0,0,0,0.72),0_0_48px_-20px_rgba(212,168,83,0.08)] md:min-h-[260px] md:flex-row"
+      style={{ boxShadow: 'var(--shadow-sm)' }}
     >
-    <motion.div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        x: moveX,
-        y: moveY,
-        backgroundColor: 'rgba(255,255,255,0.015)',
-        backgroundImage: dynamicGlow,
-        border: '1px solid var(--border)',
-        borderRadius: '1rem',
-        padding: '2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.25rem',
-        transition: 'border-color 0.3s, box-shadow 0.3s, background 0.3s',
-      }}
-      whileHover={{
-        scale: 1.015,
-        backgroundColor: 'rgba(255,79,163,0.04)',
-        borderColor: 'rgba(124,106,255,0.25)',
-        boxShadow: '0 18px 45px rgba(255,79,163,0.08), 0 0 0 1px rgba(255,255,255,0.08)',
-      }}
-      className="group relative cursor-default"
-    >
-      <div className="flex items-start justify-between">
+      <div
+        className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-[var(--bg-subtle)] will-change-transform md:aspect-auto md:w-[44%] md:min-h-[260px]"
+        data-gsap-parallax="0.07"
+      >
         <div
-          className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ background: 'var(--accent-glow)', border: '1px solid var(--border-accent)' }}
-        >
-          <div className="w-2 h-2 rounded-full" style={{ background: project.accent }} />
+          className="absolute inset-0 opacity-95 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          style={{
+            background: [
+              'radial-gradient(ellipse 85% 75% at 25% 25%, rgba(212,168,83,0.12) 0%, transparent 55%)',
+              'radial-gradient(ellipse 70% 60% at 90% 70%, rgba(94,234,212,0.07) 0%, transparent 50%)',
+              'linear-gradient(160deg, var(--surface-raised) 0%, var(--bg) 100%)',
+            ].join(', '),
+          }}
+          aria-hidden
+        />
+        <div className="absolute inset-0 flex items-end justify-between gap-3 p-5">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)]/90 text-[var(--accent)] backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-sm bg-current opacity-90" aria-hidden />
+          </span>
+          <span className="max-w-[55%] text-right text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            {project.tag}
+          </span>
         </div>
-        <span
-          className="text-xs tracking-widest uppercase"
-          style={{ color: 'var(--text-secondary)', fontSize: '10px', letterSpacing: '0.2em' }}
-        >
-          {project.tag}
-        </span>
       </div>
 
-      <h3
-        className="text-xl font-light"
-        style={{ color: 'var(--text-primary)', letterSpacing: '-0.01em' }}
-      >
-        {project.title}
-      </h3>
-
-      <p
-        className="text-sm font-light leading-relaxed flex-1"
-        style={{ color: 'var(--text-secondary)', lineHeight: 1.85 }}
-      >
-        {project.description}
-      </p>
-
-      <div className="flex flex-wrap gap-2 pt-2" style={{ borderTop: '1px solid var(--border)' }}>
-        {project.tech.map((t) => (
-          <motion.span
-            key={t}
-            className="text-xs px-3 py-1 rounded-full"
-            style={{
-              background: 'var(--accent-glow)',
-              color: project.accent,
-              border: '1px solid var(--border-accent)',
-            }}
-            whileHover={{ scale: 1.08, background: 'rgba(255,79,163,0.12)' }}
-            transition={{ duration: 0.15 }}
-          >
-            {t}
-          </motion.span>
-        ))}
+      <div className="relative flex flex-1 flex-col justify-center p-6 sm:p-8">
+        <h3 className="font-display text-xl leading-snug tracking-tight text-[var(--text-primary)] sm:text-2xl">
+          {project.title}
+        </h3>
+        <p className="prose-muted mt-4 text-[15px] leading-relaxed">{project.description}</p>
+        <div className="mt-6 flex flex-wrap gap-2 border-t border-[var(--border)] pt-6">
+          {project.tech.map((t) => (
+            <span
+              key={t}
+              className="rounded-md border border-[var(--border)] bg-[rgba(255,255,255,0.02)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)] transition-colors duration-200 group-hover:border-[rgba(212,168,83,0.35)] group-hover:text-[var(--accent-bright)]"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
       </div>
-    </motion.div>
-    </motion.div>
+    </article>
   )
 }
 
@@ -170,40 +57,36 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative w-full py-40 px-6"
-      style={{ background: 'rgba(4,4,8,0.78)' }}
+      className="section-surface relative border-t border-[var(--border)] py-20 md:py-28"
+      data-work-section
     >
-      <div className="max-w-6xl mx-auto">
-        <SplitText
-          text="Projects"
-          by="char"
-          delay={0}
-          stagger={0.045}
-          scrollTrigger
-          as="p"
-          className="text-xs tracking-[0.4em] uppercase mb-6"
-          style={{ color: 'var(--accent)', letterSpacing: '0.35em' }}
-        />
+      <div
+        aria-hidden
+        data-work-glow
+        className="pointer-events-none absolute inset-0 opacity-0"
+        style={{
+          background: [
+            'radial-gradient(ellipse 70% 45% at 18% 25%, rgba(212,168,83,0.12) 0%, transparent 58%)',
+            'radial-gradient(ellipse 52% 38% at 90% 70%, rgba(94,234,212,0.08) 0%, transparent 55%)',
+          ].join(', '),
+        }}
+      />
+      <div className="relative mx-auto max-w-[1180px] px-5 sm:px-8">
+        <div data-gsap-reveal data-work-title>
+          <SectionHeading index="03" title="Work" />
+        </div>
 
-        <FadeIn delay={0.1} blur>
-          <h2
-            className="font-light mb-20"
-            style={{
-              fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-              lineHeight: 1.15,
-              letterSpacing: '-0.02em',
-              color: 'var(--text-primary)',
-              maxWidth: '600px',
-            }}
-            >
-              Built where most<br />
-              <span className="text-gradient">engineers don't look.</span>
-            </h2>
-        </FadeIn>
+        <div data-gsap-reveal data-work-lede>
+          <p className="mb-14 max-w-2xl text-[clamp(1.25rem,2.5vw,1.85rem)] leading-snug text-[var(--text-secondary)] md:mb-16">
+            Engagements where{' '}
+            <span className="font-medium text-[var(--text-primary)]">instrumentation and runtime evidence</span>{' '}
+            shaped the outcome — not assumptions.
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project, i) => (
-            <ProjectCard key={project.title} project={project} index={i} />
+        <div className="flex flex-col gap-6 md:gap-8" data-work-cards>
+          {projects.map((project) => (
+            <ProjectCard key={project.title} project={project} />
           ))}
         </div>
       </div>

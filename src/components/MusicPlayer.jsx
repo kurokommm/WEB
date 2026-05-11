@@ -29,19 +29,20 @@ export default function MusicPlayer() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 2.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed bottom-8 right-8 z-50"
+      className="fixed bottom-5 right-5 z-[60] sm:bottom-8 sm:right-8"
     >
       <motion.button
         onClick={toggle}
         disabled={fading}
         whileTap={{ scale: 0.94 }}
-        className="flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-500"
+        className="flex items-center gap-3 rounded-[10px] px-4 py-3 transition-all duration-300"
         style={{
-          background: playing ? 'rgba(255,79,163,0.1)' : 'rgba(255,255,255,0.03)',
-          border: playing ? '1px solid rgba(255,79,163,0.3)' : '1px solid rgba(255,255,255,0.07)',
-          backdropFilter: 'blur(16px)',
+          background: playing ? 'var(--accent-subtle)' : 'rgba(255,255,255,0.04)',
+          border: playing ? '1px solid var(--border-accent)' : '1px solid var(--border)',
+          backdropFilter: 'blur(18px) saturate(1.2)',
+          WebkitBackdropFilter: 'blur(18px) saturate(1.2)',
           cursor: fading ? 'not-allowed' : 'pointer',
-          boxShadow: playing ? '0 0 24px rgba(255,79,163,0.16)' : 'none',
+          boxShadow: playing ? '0 0 28px var(--accent-glow)' : 'var(--shadow-card)',
         }}
         aria-label={playing ? 'Pause music' : 'Play music'}
       >
@@ -79,7 +80,7 @@ export default function MusicPlayer() {
             minWidth: '3.6rem',
           }}
         >
-          {fading ? 'Fading…' : playing ? 'a lot' : 'Music'}
+          {fading ? 'Fading…' : playing ? 'Playing' : 'Ambient'}
         </span>
       </motion.button>
     </motion.div>

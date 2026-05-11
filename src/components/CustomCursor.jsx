@@ -86,7 +86,7 @@ export default function CustomCursor() {
         animate={{
           scale: isDown ? 0.75 : isPointer ? 1.6 : 1,
           opacity: isVisible ? (isPointer ? 0.8 : 0.35) : 0,
-          borderColor: isPointer ? 'var(--accent)' : 'rgba(22,214,116,0.4)',
+          borderColor: isPointer ? 'var(--accent)' : 'rgba(161,161,170,0.45)',
         }}
         transition={{ duration: 0.18, ease: 'easeOut' }}
         style={{
@@ -96,7 +96,7 @@ export default function CustomCursor() {
           width: 40,
           height: 40,
           borderRadius: '50%',
-          border: '1px solid rgba(22,214,116,0.4)',
+          border: '1px solid rgba(161,161,170,0.35)',
           zIndex: 9998,
         }}
       />

@@ -1,166 +1,109 @@
 import { useRef, useEffect, useState } from 'react'
-import { motion, useInView, animate } from 'framer-motion'
-import FadeIn from './FadeIn'
-import SplitText from './SplitText'
+import { useInView, animate, useReducedMotion } from 'framer-motion'
+import SectionHeading from './SectionHeading'
 
 const stats = [
-  { value: 5, suffix: '+', label: 'Years of experience' },
-  { value: 10, suffix: '+', label: 'Systems built' },
+  { value: 5, suffix: '+', label: 'Years experience' },
+  { value: 10, suffix: '+', label: 'Systems shipped' },
   { value: 3, suffix: '', label: 'Core domains' },
 ]
 
 function Counter({ value, suffix, delay }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const inView = useInView(ref, { once: true, margin: '-40px' })
   const [displayed, setDisplayed] = useState(0)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     if (!inView) return
+    if (reduceMotion) {
+      setDisplayed(value)
+      return
+    }
     const controls = animate(0, value, {
-      duration: 1.8,
+      duration: 1.6,
       delay,
       ease: [0.16, 1, 0.3, 1],
       onUpdate: (v) => setDisplayed(Math.round(v)),
     })
     return controls.stop
-  }, [inView, value, delay])
+  }, [inView, value, delay, reduceMotion])
 
   return (
-    <span ref={ref}>
-      {displayed}{suffix}
+    <span ref={ref} className="tabular-nums">
+      {displayed}
+      {suffix}
     </span>
   )
 }
 
 const traits = [
   { label: 'Specialization', value: 'Low-level systems & runtime analysis' },
-  { label: 'Domain',         value: 'Reverse engineering & system research' },
-  { label: 'Environment',    value: 'Unity / Il2Cpp, real-time 3D architectures' },
-  { label: 'Approach',       value: 'Precision, efficiency, deep system awareness' },
+  { label: 'Domain', value: 'Reverse engineering & system research' },
+  { label: 'Environment', value: 'Unity / Il2Cpp, real-time 3D' },
+  { label: 'Approach', value: 'Precision, efficiency, deep system awareness' },
 ]
 
 export default function About() {
   return (
     <section
       id="about"
-      className="relative w-full py-40 px-6"
-      style={{ background: 'rgba(4,4,8,0.78)' }}
+      className="section-surface relative border-t border-[var(--border)] py-20 md:py-28"
     >
-      {/* Divider line */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-24"
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(124,106,255,0.3))' }}
-      />
+      <div className="relative mx-auto max-w-[1180px] px-5 sm:px-8">
+        <div data-gsap-reveal>
+          <SectionHeading index="01" title="About" />
+        </div>
 
-      <div className="max-w-5xl mx-auto">
-        <SplitText
-          text="About"
-          by="char"
-          delay={0}
-          stagger={0.05}
-          scrollTrigger
-          as="p"
-          className="text-xs tracking-[0.4em] uppercase mb-6"
-          style={{ color: 'var(--accent)', letterSpacing: '0.35em' }}
-        />
-
-        {/* Animated stats row */}
-        <div className="grid grid-cols-3 gap-6 mb-20">
+        <div className="mb-14 grid grid-cols-1 gap-3 sm:grid-cols-3 md:mb-20" data-gsap-reveal>
           {stats.map((stat, i) => (
-            <motion.div
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ scale: 1.04 }}
-              className="stat-card rounded-2xl p-6 text-center"
-              style={{
-                background: 'rgba(255,255,255,0.02)',
-                border: '1px solid var(--border)',
-              }}
+              className="stat-card liquid-glass-card rounded-[var(--radius-lg)] border border-[var(--border)] px-6 py-8 text-center"
             >
               <div
-                className="font-light mb-1"
-                style={{
-                  fontSize: 'clamp(2rem, 4vw, 3rem)',
-                  color: 'var(--accent)',
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1,
-                }}
+                className="font-display text-3xl text-[var(--accent)] md:text-4xl"
+                style={{ letterSpacing: '-0.04em' }}
               >
-                <Counter value={stat.value} suffix={stat.suffix} delay={0.4 + i * 0.15} />
+                <Counter value={stat.value} suffix={stat.suffix} delay={0.25 + i * 0.12} />
               </div>
-              <div
-                className="text-xs tracking-widest uppercase"
-                style={{ color: 'var(--text-secondary)', letterSpacing: '0.15em', fontSize: '10px' }}
-              >
+              <div className="mt-2 text-[11px] font-medium uppercase tracking-wider text-[var(--text-muted)]">
                 {stat.label}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-20 items-start">
-          <div>
-            <FadeIn delay={0.1} blur>
-              <h2
-                className="font-light mb-8"
-                style={{
-                  fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-                  lineHeight: 1.15,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                Engineering beyond<br />
-                <span className="text-gradient">the visible layer.</span>
-              </h2>
-            </FadeIn>
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16" data-gsap-reveal>
+          <div className="lg:col-span-7">
+            <h2 className="font-display text-[clamp(1.6rem,3.2vw,2.5rem)] leading-tight tracking-tight text-[var(--text-primary)]">
+              Beyond the surface: memory layouts, engines, and observable runtime behavior.
+            </h2>
 
-            <div className="text-base font-light leading-relaxed mb-6" style={{ color: 'var(--text-secondary)', lineHeight: 2 }}>
-              <SplitText
-                text="I am Yassine Nime — a developer specialized in low-level systems, reverse engineering, and performance-driven architectures. My work focuses on understanding how software functions at its core: from memory structures and runtime engines to real-time rendering and spatial transformations."
-                by="word"
-                delay={0.2}
-                stagger={0.03}
-                scrollTrigger
-              />
-            </div>
-
-            <div className="text-base font-light leading-relaxed" style={{ color: 'var(--text-secondary)', lineHeight: 2 }}>
-              <SplitText
-                text="I design solutions involving runtime memory analysis, engine research in Unity / Il2Cpp environments, real-time data visualization, and 3D mathematical modeling — vectors, matrices, quaternion rotations. Every tool I build is engineered for precision and performance."
-                by="word"
-                delay={0.3}
-                stagger={0.03}
-                scrollTrigger
-              />
+            <div className="mt-8 space-y-6">
+              <p className="prose-muted max-w-xl text-[16px]">
+                Yassine Nime — focused on low-level systems, reverse engineering, and performance-driven
+                architectures. Work spans runtime memory, engine internals, and spatial math for real-time
+                visualization.
+              </p>
+              <p className="prose-muted max-w-xl text-[16px]">
+                Unity / Il2Cpp analysis, ADB-adjacent tooling, and 3D pipelines with vectors, matrices, and
+                quaternions — for teams that need accuracy, not demos.
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-0">
-            {traits.map((trait, i) => (
-              <FadeIn key={trait.label} delay={0.15 + i * 0.1} direction="left">
-                <div
-                  className="flex flex-col gap-1 py-6 transition-all duration-300"
-                  style={{ borderBottom: '1px solid var(--border)' }}
-                >
-                  <span
-                    className="text-xs tracking-widest uppercase"
-                    style={{ color: 'var(--accent)', letterSpacing: '0.2em', fontSize: '11px' }}
-                  >
+          <div className="lg:col-span-5">
+            <ul className="divide-y divide-[var(--border)] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)]">
+              {traits.map((trait) => (
+                <li key={trait.label} className="px-6 py-5 sm:px-7">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">
                     {trait.label}
-                  </span>
-                  <span
-                    className="text-base font-light"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {trait.value}
-                  </span>
-                </div>
-              </FadeIn>
-            ))}
+                  </p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-primary)]">{trait.value}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

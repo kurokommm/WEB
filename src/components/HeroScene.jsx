@@ -4,11 +4,11 @@ import { Points, PointMaterial } from '@react-three/drei'
 import * as THREE from 'three'
 import { useMouse } from '../hooks/useMouse'
 
-const G_BRIGHT = '#ff4fa3'
-const G_MID    = '#ffd8eb'
-const G_DIM    = '#6a1a46'
-const G_PALE   = '#f2c4dd'
-const G_HALO   = '#fff4fa'
+const G_BRIGHT = '#fb923c'
+const G_MID    = '#f97316'
+const G_DIM    = '#c2410c'
+const G_PALE   = '#fdba74'
+const G_HALO   = '#fff7ed'
 
 /* ── Accretion disc ring — each ring rotates at its own speed ── */
 function DiscRing({ innerR, outerR, count, speed, colorA, colorB, heightScale = 0.08 }) {
@@ -248,7 +248,7 @@ function SpaceDust() {
     <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#ffe6f2"
+        color="#ffedd5"
         size={0.014}
         sizeAttenuation
         depthWrite={false}
@@ -280,7 +280,7 @@ function StarField() {
     <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#ffeaf4"
+        color="#fed7aa"
         size={0.01}
         sizeAttenuation
         depthWrite={false}
@@ -307,7 +307,7 @@ function BlackHole() {
       <StarField />
 
       {/* Disc — 3 rings at Keplerian speeds (inner fastest) */}
-      <DiscRing innerR={0.48} outerR={1.1}  count={3000} speed={0.95} colorA="#fff1f8" colorB={G_BRIGHT} heightScale={0.04} />
+      <DiscRing innerR={0.48} outerR={1.1}  count={3000} speed={0.95} colorA="#fff7ed" colorB={G_BRIGHT} heightScale={0.04} />
       <DiscRing innerR={1.1}  outerR={2.4}  count={4000} speed={0.42} colorA={G_BRIGHT} colorB={G_MID}    heightScale={0.10} />
       <DiscRing innerR={2.4}  outerR={4.2}  count={3000} speed={0.16} colorA={G_MID}   colorB={G_PALE}   heightScale={0.18} />
 
